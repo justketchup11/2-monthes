@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>two months</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* Layout: a locked night sky -> slide 1 -> three closed frames that develop on tap -> slide 2 */
+:root {
+  --night: #0b1022;
+  --night-2: #131a36;
+  --pink: #f4a6c8;
+  --blue: #8fb8ff;
+  --paper: #f4efe6;
+  --ink: #2a2440;
+  --text: #f1ecf7;
+  --muted: #a9a7c6;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--text);
+  font-family: var(--serif);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(60vmax 40vmax at 15% 10%, rgba(244,166,200,.16), transparent 60%),
+    radial-gradient(60vmax 45vmax at 90% 85%, rgba(143,184,255,.17), transparent 60%),
+    var(--night);
+}
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; border-radius: 6px; }
+h1, h2, p { margin: 0; }
+
+/* ---------- lock ---------- */
+.lock {
+  min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 28px; text-align: center; padding-block: 40px;
+}
+.lock[hidden] { display: none; }
+.lock .hint { font-family: var(--hand); font-size: 1.7rem; color: var(--muted); }
+.lock h2 { font-size: clamp(2rem, 8vw, 3rem); font-weight: 400; font-style: italic; }
+.code { display: flex; gap: 12px; }
+.code input {
+  width: 3.4rem; height: 4.4rem; text-align: center; font: 400 2.2rem var(--serif);
+  color: var(--text); background: rgba(255,255,255,.05);
+  border: 1px solid rgba(241,236,247,.28); border-radius: 14px; caret-color: var(--pink);
+}
+.code input:focus { border-color: var(--pink); outline: none; box-shadow: 0 0 0 3px rgba(244,166,200,.25); }
+.code.shake { animation: shake .45s; }
+.code.shake input { border-color: #ff8fa3; }
+.lock .err { min-height: 1.6em; font-family: var(--hand); font-size: 1.4rem; color: #ffb3c1; }
+@keyframes shake { 20%{transform:translateX(-9px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(4px)} }
+
+/* ---------- main ---------- */
+.main { display: none; }
+.main.on { display: block; animation: appear 1.4s ease both; }
+@keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+
+.slide { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 26px; padding-block: 56px; }
+.slide h1 { font-size: clamp(2.6rem, 11vw, 5.6rem); font-weight: 400; line-height: 1.02; text-wrap: balance; max-width: 14ch; }
+.slide h1 em { font-style: italic; color: var(--pink); }
+.slide .sub { font-family: var(--hand); font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.3; color: var(--muted); max-width: 30ch; text-wrap: balance; }
+.scroll { font-family: var(--hand); font-size: 1.4rem; color: var(--blue); margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.scroll span { display: block; animation: bob 1.8s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(7px); } }
+
+/* ---------- frames ---------- */
+.frames { display: flex; flex-direction: column; align-items: center; gap: 72px; padding-block: 70px 110px; }
+.frames .lead { font-family: var(--hand); font-size: 1.7rem; color: var(--muted); text-align: center; }
+.frame {
+  --tilt: -2deg; --w: min(78vw, 320px);
+  position: relative; width: var(--w); padding: 14px 14px 0; background: var(--paper); border: 0; cursor: pointer;
+  border-radius: 4px; box-shadow: 0 18px 40px rgba(0,0,0,.45); transform: rotate(var(--tilt));
+  display: block; text-align: center; color: var(--ink); font: inherit;
+  opacity: 0; translate: 0 40px; transition: opacity .9s ease, translate .9s ease, transform .35s ease;
+}
+.frame.seen { opacity: 1; translate: 0 0; }
+.frame:hover { transform: rotate(0deg) scale(1.02); }
+.frame:nth-of-type(2) { --tilt: 2.2deg; }
+.frame:nth-of-type(3) { --tilt: -1.2deg; --w: min(88vw, 400px); }
+.frame::before {
+  content: ""; position: absolute; top: -13px; left: 50%; width: 92px; height: 26px; translate: -50% 0; rotate: -3deg;
+  background: rgba(244,166,200,.75); border-radius: 2px;
+}
+.frame:nth-of-type(2)::before { background: rgba(143,184,255,.8); rotate: 4deg; }
+.frame:nth-of-type(3)::before { background: linear-gradient(90deg, rgba(244,166,200,.8) 50%, rgba(143,184,255,.8) 50%); }
+.shot { position: relative; overflow: hidden; background: var(--night-2); aspect-ratio: var(--ratio); }
+.shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: blur(22px) brightness(.25) saturate(0); transform: scale(1.15);
+  transition: filter 2.6s ease, transform 2.6s ease; }
+.shot .tap { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--hand); font-size: 2rem; color: var(--paper); transition: opacity .5s ease; }
+.frame.open .shot img { filter: none; transform: scale(1); }
+.frame.open .shot .tap { opacity: 0; pointer-events: none; }
+.cap { font-family: var(--hand); font-size: 1.9rem; padding: 10px 0 12px; line-height: 1; }
+
+/* ---------- slide 2 ---------- */
+.slide.last h2 { font-size: clamp(2.4rem, 10vw, 5rem); font-weight: 400; font-style: italic; line-height: 1.08; max-width: 14ch; text-wrap: balance; }
+.slide.last .rings { display: flex; }
+.slide.last .rings i { width: 44px; height: 44px; border-radius: 50%; border: 5px solid var(--pink); }
+.slide.last .rings i + i { border-color: var(--blue); margin-left: -14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .scroll span, .main.on { animation: none; }
+  .frame { transition: none; opacity: 1; translate: 0 0; }
+  .shot img { transition: none; }
+  .code.shake { animation: none; }
+}
+</style>
+
+</head>
+<body>
+<section class="lock" id="lock">
+  <p class="hint">the day we become close friends</p>
+  <h2>enter our code</h2>
+  <form class="code" id="code" autocomplete="off" aria-label="four digit code">
+    <input id="d0" inputmode="numeric" maxlength="1" pattern="[0-9]" aria-label="digit 1">
+    <input id="d1" inputmode="numeric" maxlength="1" pattern="[0-9]" aria-label="digit 2">
+    <input id="d2" inputmode="numeric" maxlength="1" pattern="[0-9]" aria-label="digit 3">
+    <input id="d3" inputmode="numeric" maxlength="1" pattern="[0-9]" aria-label="digit 4">
+  </form>
+  <p class="err" id="err" role="status"></p>
+</section>
+
+<main class="main" id="main">
+  <section class="slide">
+    <h1>we are friends for <em>2 months</em></h1>
+    <p class="sub">since 3rd september, im happiest person alive, since that day my life been brightened by ur presence</p>
+    <div class="scroll" aria-hidden="true">scroll down<span>↓</span></div>
+  </section>
+
+  <section class="frames" id="frames">
+    <p class="lead">tap the frames</p>
+    <button class="frame" type="button" style="--ratio:3/4" aria-label="open photo: me">
+      <div class="shot"><img alt="me" src="me.jpg"><div class="tap">tap</div></div>
+      <div class="cap">me</div>
+    </button>
+    <button class="frame" type="button" style="--ratio:3/4" aria-label="open photo: you">
+      <div class="shot"><img alt="you" src="you.jpg"><div class="tap">tap</div></div>
+      <div class="cap">you</div>
+    </button>
+    <button class="frame" type="button" style="--ratio:4/3" aria-label="open photo: us">
+      <div class="shot"><img alt="us" src="us.jpg"><div class="tap">tap</div></div>
+      <div class="cap">us</div>
+    </button>
+  </section>
+
+  <section class="slide last">
+    <div class="rings" aria-hidden="true"><i></i><i></i></div>
+    <h2>i know what we gon do today</h2>
+  </section>
+</main>
+
+<script>
+(function () {
+  var lock = document.getElementById('lock'), main = document.getElementById('main');
+  var form = document.getElementById('code'), err = document.getElementById('err');
+  var ins = [0,1,2,3].map(function (i) { return document.getElementById('d' + i); });
+
+  function unlock() {
+    lock.hidden = true; main.classList.add('on'); window.scrollTo(0, 0); setupFrames();
+  }
+  function check() {
+    var v = ins.map(function (x) { return x.value; }).join('');
+    if (v.length < 4) return;
+    if (v === '0309') { unlock(); return; }
+    err.textContent = 'not quite, think of our day';
+    form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake');
+    setTimeout(function () { ins.forEach(function (x) { x.value = ''; }); ins[0].focus(); }, 450);
+  }
+  ins.forEach(function (el, i) {
+    el.addEventListener('input', function () {
+      el.value = el.value.replace(/\D/g, '').slice(-1);
+      err.textContent = '';
+      if (el.value && i < 3) ins[i + 1].focus();
+      check();
+    });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !el.value && i > 0) { ins[i - 1].focus(); ins[i - 1].value = ''; }
+    });
+    el.addEventListener('paste', function (e) {
+      var t = ((e.clipboardData || window.clipboardData).getData('text') || '').replace(/\D/g, '').slice(0, 4);
+      if (!t) return;
+      e.preventDefault();
+      ins.forEach(function (x, k) { x.value = t[k] || ''; });
+      check();
+    });
+  });
+  form.addEventListener('submit', function (e) { e.preventDefault(); });
+
+  function setupFrames() {
+    var fr = Array.prototype.slice.call(document.querySelectorAll('.frame'));
+    fr.forEach(function (f) {
+      f.addEventListener('click', function () { f.classList.add('open'); f.setAttribute('aria-label', f.querySelector('img').alt); });
+    });
+    if (!('IntersectionObserver' in window)) { fr.forEach(function (f) { f.classList.add('seen'); }); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); } });
+    }, { threshold: 0.2 });
+    fr.forEach(function (f) { io.observe(f); });
+  }
+  ins[0].focus();
+})();
+</script>
+</body>
+</html>
